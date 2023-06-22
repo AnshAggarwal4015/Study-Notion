@@ -30,8 +30,8 @@ const timeline = [
 
 const TimelineSection = () => {
   return (
-    <div className="flex flex-row gap-24 items-center">
-      <div className="w-[40%] flex flex-col gap-16">
+    <div className="flex flex-col sm:flex-row gap-24 items-center">
+      <div className="sm:w-[40%] flex flex-col gap-16">
         {timeline.map((element, index) => {
           return (
             <div key={index} className="flex flex-row gap-6">

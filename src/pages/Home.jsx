@@ -13,8 +13,8 @@ function Home() {
   return (
     <div>
       <div
-        className="relative mx-auto flex flex-col w-11/12 items-center
-       text-white justify-between max-w-maxContent"
+        className="relative mx-auto flex flex-col w-11/12 
+       text-white justify-between items-center max-w-maxContent"
       >
         <Link to={"/signup"}>
           <div
@@ -63,11 +63,11 @@ function Home() {
           </video>
         </div>
 
-      {/* Section Type Animation */}
+        {/* Section Type Animation */}
 
         <div>
           <CodeBlocks
-            position={"lg: flex-row"}
+            position={"flex-col sm:flex-row"}
             heading={
               <div className="text-4xl font-semibold">
                 Unlock your <HighlightText text={"coding potential"} /> with our
@@ -105,7 +105,7 @@ function Home() {
 
         <div>
           <CodeBlocks
-            position={"lg:flex-row-reverse"}
+            position={"flex-col sm:flex-row-reverse"}
             heading={
               <div className="text-4xl font-semibold">
                 Start
@@ -159,13 +159,13 @@ function Home() {
         </div>
 
         <div className="gap-7 w-11/12 max-w-maxContent mx-auto flex flex-col items-center justify-between">
-          <div className="mt-[5.625rem] flex flex-row gap-5 mb-10">
-            <div className="font-semibold text-4xl w-[45%]">
+          <div className="mt-[5.625rem] gap-5 mb-10 flex flex-col sm:flex-row ">
+            <div className="font-semibold text-4xl sm:w-[45%]">
               Get the skills you need for a{" "}
               <HighlightText text={`job that is in demand.`} />
             </div>
 
-            <div className="flex flex-col gap-10 items-start w-[45%]">
+            <div className="flex flex-col gap-10 items-start sm:w-[45%]">
               <div className="text-base	">
                 The modern StudyNotion is the dictates its own terms. Today, to
                 be a competitive specialist requires more than professional

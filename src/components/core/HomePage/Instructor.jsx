@@ -6,19 +6,19 @@ import { FaArrowRight } from "react-icons/fa";
 
 const InstructorSection = () => {
   return (
-    <div className="flex flex-row gap-20 items-center">
-      <div className="flex flex-row gap-20 items-center">
-        <div className="w-[50%]">
+    <div className="flex flex-col sm:flex-row gap-20 sm:items-center">
+      <div className="flex flex-col-reverse sm:flex-row gap-20 sm:items-center">
+        <div className="sm:w-[50%]">
           <img src={Instructor} alt="" className="shadow-white" />
         </div>
 
-        <div className="w-[50%] flex flex-col gap-10">
-          <div className="text-4xl font-semobold w-[50%]">
+        <div className="sm:w-[50%] flex flex-col gap-10">
+          <div className="text-4xl font-semobold sm:w-[50%]">
             Become an
             <HighlightText text={"Instructor"} />
           </div>
 
-          <p className="font-medium text-[16px] w-[80%] text-richblack-300">
+          <p className="font-medium text-[16px] sm:w-[80%] text-richblack-300">
             Instructors from around the world teach millions of students on
             StudyNotion. We provide the tools and skills to teach what you love.
           </p>

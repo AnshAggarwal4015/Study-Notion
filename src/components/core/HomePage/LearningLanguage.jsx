@@ -16,7 +16,7 @@ const LearningLanguage = () => {
         realistic voice-over, progress tracking, custom schedule and more.
       </div>
 
-      <div className="flex flex-row items-center justify-center mt-12">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-center mt-12">
         <img
           src={know_your_progress}
           alt="KNowYourProgressImage"
@@ -24,13 +24,13 @@ const LearningLanguage = () => {
         />
         <img
           src={compare_with_others}
-          alt="KNowYourProgressImage"
+          alt="compare_with_others"
           className="object-contain"
         />
         <img
           src={plan_your_lesson}
-          alt="KNowYourProgressImage"
-          className="object-contain -ml-36"
+          alt="plan_your_lesson"
+          className="object-contain sm:-ml-36"
         />
       </div>
 
