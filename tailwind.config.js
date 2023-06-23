@@ -132,6 +132,7 @@ module.exports = {
       boxShadow: {
         custom: '0px 1px 0px rgba(255, 255, 255, 0.18)',
         customHomePageButton: '2px 2px 0px rgba(255, 255, 255, 0.51)',
+        customAuthButtonShadow: '-0.5px 1.5px 0px 0px rgba(0, 0, 0, 0.12)',
       },
     },
   },
