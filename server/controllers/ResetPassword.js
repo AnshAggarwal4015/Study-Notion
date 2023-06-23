@@ -1,6 +1,8 @@
 const { json } = require("express");
 const User = require("../models/User");
 const mailSender = require("../utils/mailSender");
+const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 
 exports.resetPasswordToken = async (req, res) => {
   try {
@@ -14,7 +16,7 @@ exports.resetPasswordToken = async (req, res) => {
       });
     }
 
-    const token = crypto.randomUUID();
+    const token = crypto.randomBytes(20).toString("hex");
     const updatedDetails = await User.findOneAndUpdate(
       { email: email },
       {
@@ -23,22 +25,23 @@ exports.resetPasswordToken = async (req, res) => {
       },
       { new: true }
     );
-
+    console.log({ updatedDetails });
     const url = `http://localhost:3000/update-password/${token}`;
 
     await mailSender(
       email,
-      "Password Reset Link",
-      `Password Reset Link: ${token}`
+      "Password Reset",
+      `Your Link for email verification is ${url}. Please click this url to reset your password.`
     );
 
-    return res.status(200).json({
+    res.json({
       success: true,
-      message: `Email sent successfully, Please Check your Email`,
+      message:
+        "Email Sent Successfully, Please Check Your Email to Continue Further",
     });
   } catch (error) {
     console.log(error);
-    res.status(500).jsoN({
+    res.status(500).json({
       success: false,
       message: `Internal Server Error, Please Try Again`,
     });

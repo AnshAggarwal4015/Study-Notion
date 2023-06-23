@@ -4,12 +4,12 @@ const otpGenerator = require("otp-generator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { passwordUpdated } = require("../mail/templates/passwordUpdate");
-const { Profile } = require("../models/Profile");
+const Profile= require("../models/Profile");
 const { mailSender } = require("../utils/mailSender");
 const dotenv = require("dotenv");
 dotenv.config();
 
-exports.sendOTP = async (req, res) => {
+exports.sendotp = async (req, res) => {
   try {
     const { email } = req.body;
     const checkUserPresent = await User.findOne({ email });
@@ -97,45 +97,49 @@ exports.signUp = async (req, res) => {
         message: `User is already registered`,
       });
     }
-
-    const recentOtp = await OTP.findOne({ email })
-      .sort({ createdAt: -1 })
-      .limit(1);
-
-    if (recentOtp.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "The OTP is not valid",
-      });
-    } else if (recentOtp[0].otp !== otp) {
-      return res.status(400).json({
-        success: false,
-        message: "The OTP is not valid",
-      });
-    }
-
+    console.log("Reaced response")
+    const response = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1);
+		console.log(response);
+		if (response.length === 0) {
+			// OTP not found for the email
+			return res.status(400).json({
+				success: false,
+				message: "The OTP is not valid",
+			});
+		} else if (otp !== response[0].otp) {
+			// Invalid OTP
+			return res.status(400).json({
+				success: false,
+				message: "The OTP is not valid",
+			});
+		}
+    console.log("Reaced hashedPassword")
     const hashedPassword = await bcrypt.hash(password, 10);
 
     let approved = "";
     approved === "Instructor" ? (approved = false) : (approved = true);
+    console.log("Reaced profileDetails")
 
     const profileDetails = await Profile.create({
-      gender: null,
-      dateOfBirth: null,
-      about: null,
-      contactNumber: null,
-    });
+			gender: null,
+			dateOfBirth: null,
+			about: null,
+			contactNumber: null,
+		});
+    console.log({profileDetails})
+    
+    console.log("Reaced user")
     const user = await User.create({
-      firstName,
-      lastName,
-      email,
-      contactNumber,
-      password: hashedPassword,
-      accountType: accountType,
-      approved: approved,
-      additionalDetails: profileDetails._id,
-      image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`,
-    });
+			firstName,
+			lastName,
+			email,
+			contactNumber,
+			password: hashedPassword,
+			accountType: accountType,
+			approved: approved,
+			additionalDetails: profileDetails._id,
+			image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`,
+		});
 
     res.status(200).json({
       success: true,
@@ -162,7 +166,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email }).populate("additionalDetials");
+    const user = await User.findOne({ email }).populate("additionalDetails");
 
     if (!user) {
       return res.status(401).json({
