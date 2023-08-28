@@ -57,10 +57,10 @@ export function updateProfile(token, formData) {
       }
       console.log({ response });
       console.log(" Response.data", response.data);
-      const userImage = response.data.data.image
-        ? response.data.data.image
-        : `https://api.dicebear.com/5.x/initials/svg?seed=${response.data.data.firstName} ${response.data.data.lastName}`;
-      dispatch(setUser({ ...response.data.data, image: userImage }));
+      // const userImage = response.data.data.image
+      //   ? response.data.data.image
+      //   : `https://api.dicebear.com/5.x/initials/svg?seed=${response.data.data.firstName} ${response.data.data.lastName}`;
+      // dispatch(setUser({ ...response.data.data, image: userImage }));
       toast.success("Profile Updated Successfully");
     } catch (error) {
       console.log("UPDATE_PROFILE_API API ERROR - ", error);
