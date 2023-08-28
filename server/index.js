@@ -20,7 +20,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "http://localhost:3000" || `https://studynotion-frontend-71fqp3qjx-anshaggarwal4015.vercel.app/`,
     credentials: true,
   })
 );
