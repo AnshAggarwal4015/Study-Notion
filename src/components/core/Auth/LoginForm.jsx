@@ -1,23 +1,34 @@
 import React, { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { login } from "../../../services/operations/authAPI"
+import { useDispatch } from "react-redux"
 
 const LoginForm = () => {
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-  });
+  })
+
+  const [showPassword, setShowPassword] = useState(false)
+
+  const { email, password } = formData
+
   const handleOnChange = (e) => {
     setFormData((prevData) => ({
       ...prevData,
       [e.target.name]: e.target.value,
-    }));
-  };
-  const [showPassword, setShowPassword] = useState(false);
+    }))
+  }
 
-  const { email, password } = formData;
+  const handleOnSubmit = (e) => {
+    e.preventDefault()
+    dispatch(login(email, password, navigate))
+  }
   return (
-    <form className="flex flex-col w-full gap-y-9 mt-9">
+    <form onSubmit={handleOnSubmit} className="flex flex-col w-full gap-y-9 mt-9">
       <label className="w-full">
         <div className="text-sm	text-richblack-5 mb-1">
           Email Address <sup className="text-pink-200">*</sup>

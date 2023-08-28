@@ -52,14 +52,18 @@ exports.resetPassword = async (req, res) => {
   try {
     const { password, confirmPassword, token } = req.body;
 
+    if (password !== confirmPassword) {
+      return res.status(500).json({
+        success: false,
+        message: `Password Not Matching`,
+      });
+    }
+
     if (!password || !confirmPassword) {
-      return (
-        res /
-        json({
-          success: false,
-          message: `Password Not Matching`,
-        })
-      );
+      return res.status(500).json({
+        success: false,
+        message: `All Fields are required`,
+      });
     }
 
     const userDetails = await User.findOne({ token: token });
@@ -71,7 +75,7 @@ exports.resetPassword = async (req, res) => {
       });
     }
 
-    if (userDetails.resetPasswordExpires < Date.now()) {
+    if (!(userDetails.resetPasswordExpires > Date.now())) {
       return res.json({
         success: false,
         message: `Token is Expired, Regenerate your token`,
@@ -80,19 +84,19 @@ exports.resetPassword = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await User.findByIdAndUpdate(
+    await User.findOneAndUpdate(
       { token: token },
       { password: hashedPassword },
       { new: true }
     );
 
-    return res.statu(200).json({
+    return res.status(200).json({
       success: true,
       message: `Password Reset Successfully`,
     });
   } catch (error) {
     console.log(error);
-    res.status(500).jsoN({
+    res.status(500).json({
       success: false,
       message: `Internal Server Error, Please Try Again`,
     });

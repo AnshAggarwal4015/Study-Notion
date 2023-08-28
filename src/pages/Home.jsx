@@ -8,6 +8,7 @@ import TimelineSection from "../components/core/HomePage/Timeline";
 import LearningLanguageSection from "../components/core/HomePage/LearningLanguage";
 import InstructorSection from "../components/core/HomePage/Instructor";
 import Banner from "../assets/Images/banner.mp4";
+import Footer from "../components/common/Footer";
 
 function Home() {
   return (
@@ -191,6 +192,7 @@ function Home() {
           Review from other learners
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
