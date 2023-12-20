@@ -12,74 +12,68 @@ const {
 } = require("../mail/templates/paymentSuccessEmail");
 const CourseProgress = require("../models/CourseProgress");
 
+//Capture the payment and initiate the Razorpay order
 exports.capturePayment = async (req, res) => {
-  const { course_id } = req.body;
+  const { courses } = req.body;
   const userId = req.user.id;
-
-  if (!course_id) {
-    return res.status(400).json({
-      success: false,
-      message: `Could not find Course`,
-    });
+  if (courses.length === 0) {
+    return res.json({ success: false, message: "Please Provide Course ID" });
   }
 
-  let course;
-  try {
-    course = await Course.findById(course_id);
-    if (!course) {
-      return res.status(400).json({
-        success: false,
-        message: `Could not find Course`,
-      });
-    }
+  let total_amount = 0;
 
-    const uid = new mongoose.Types.ObjectId(userId);
-    if (course.studentsEnrolled.includes(uid)) {
-      return res.status(200).jsoN({
-        success: false,
-        message: "Student is already enrolled",
-      });
+  for (const course_id of courses) {
+    let course;
+    try {
+      // Find the course by its ID
+      course = await Course.findById(course_id);
+
+      // If the course is not found, return an error
+      if (!course) {
+        return res
+          .status(200)
+          .json({ success: false, message: "Could not find the Course" });
+      }
+
+      // Check if the user is already enrolled in the course
+      const uid = new mongoose.Types.ObjectId(userId);
+      if (course.studentsEnrolled.includes(uid)) {
+        return res
+          .status(200)
+          .json({ success: false, message: "Student is already Enrolled" })
+      }
+
+      // Add the price of the course to the total amount
+      total_amount += course.price;
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ success: false, message: error.message });
     }
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
   }
-
-  const amount = course.price;
-  const currency = "INR";
 
   const options = {
-    amount: amount * 100,
-    currency,
+    amount: total_amount * 100,
+    currency: "INR",
     receipt: Math.random(Date.now()).toString(),
-    notes: {
-      courseId: course_id,
-      userId,
-    },
   };
 
   try {
+    // Initiate the payment using Razorpay
     const paymentResponse = await instance.orders.create(options);
-    return res.status(200).json({
+    console.log(paymentResponse);
+    res.json({
       success: true,
-      courseName: course.courseName,
-      courseDescription: course.courseDescription,
-      thumbnail: course.thumbnail,
-      orderId: paymentResponse.id,
-      currency: paymentResponse.currency,
-      amount: paymentResponse.amount,
+      data: paymentResponse,
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
-      success: false,
-      message: "Could not initiate order",
-    });
+    res
+      .status(500)
+      .json({ success: false, message: "Could not initiate order." });
   }
 };
 
+// verify the payment
 exports.verifyPayment = async (req, res) => {
   const razorpay_order_id = req.body?.razorpay_order_id;
   const razorpay_payment_id = req.body?.razorpay_payment_id;
@@ -113,14 +107,46 @@ exports.verifyPayment = async (req, res) => {
   return res.status(200).json({ success: false, message: "Payment Failed" });
 };
 
-const enrollStudents = async (courses, userId, res) => {
-  if (!courses || !userId) {
+// Send Payment Success Email
+exports.sendPaymentSuccessEmail = async (req, res) => {
+  const { orderId, paymentId, amount } = req.body;
+
+  const userId = req.user.id;
+
+  if (!orderId || !paymentId || !amount || !userId) {
     return res
       .status(400)
-      .json({
-        success: false,
-        message: "Please Provide Course ID and User ID",
-      });
+      .json({ success: false, message: "Please provide all the details" });
+  }
+
+  try {
+    const enrolledStudent = await User.findById(userId);
+
+    await mailSender(
+      enrolledStudent.email,
+      `Payment Received`,
+      paymentSuccessEmail(
+        `${enrolledStudent.firstName} ${enrolledStudent.lastName}`,
+        amount / 100,
+        orderId,
+        paymentId
+      )
+    );
+  } catch (error) {
+    console.log("error in sending mail", error);
+    return res
+      .status(400)
+      .json({ success: false, message: "Could not send email" });
+  }
+};
+
+// enroll the student in the courses
+const enrollStudents = async (courses, userId, res) => {
+  if (!courses || !userId) {
+    return res.status(400).json({
+      success: false,
+      message: "Please Provide Course ID and User ID",
+    });
   }
 
   for (const courseId of courses) {
@@ -128,7 +154,7 @@ const enrollStudents = async (courses, userId, res) => {
       // Find the course and enroll the student in it
       const enrolledCourse = await Course.findOneAndUpdate(
         { _id: courseId },
-        { $push: { studentsEnrolled: userId } },
+        { $push: { studentsEnroled: userId } },
         { new: true }
       );
 
@@ -172,37 +198,5 @@ const enrollStudents = async (courses, userId, res) => {
       console.log(error);
       return res.status(400).json({ success: false, error: error.message });
     }
-  }
-};
-
-exports.sendPaymentSuccessEmail = async (req, res) => {
-  const { orderId, paymentId, amount } = req.body;
-
-  const userId = req.user.id;
-
-  if (!orderId || !paymentId || !amount || !userId) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Please provide all the details" });
-  }
-
-  try {
-    const enrolledStudent = await User.findById(userId);
-
-    await mailSender(
-      enrolledStudent.email,
-      `Payment Received`,
-      paymentSuccessEmail(
-        `${enrolledStudent.firstName} ${enrolledStudent.lastName}`,
-        amount / 100,
-        orderId,
-        paymentId
-      )
-    );
-  } catch (error) {
-    console.log("error in sending mail", error);
-    return res
-      .status(400)
-      .json({ success: false, message: "Could not send email" });
   }
 };

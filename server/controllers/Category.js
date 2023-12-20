@@ -51,6 +51,7 @@ exports.showAllCategory = async (req, res) => {
 exports.categoryPageDetails = async (req, res) => {
   try {
     const { categoryId } = req.body;
+    console.log(categoryId);
     const selectedCategory = await Category.findById(categoryId)
       .populate({
         path: "courses",
