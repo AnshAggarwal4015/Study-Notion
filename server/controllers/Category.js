@@ -18,7 +18,6 @@ exports.createCategory = async (req, res) => {
       name: name,
       description: description,
     });
-    console.log(categoryDetails);
     return res.status(200).json({
       success: true,
       message: "Category created successfully",
@@ -68,7 +67,6 @@ exports.categoryPageDetails = async (req, res) => {
     }
 
     if (selectedCategory.courses.length === 0) {
-      console.log("No courses found for the selected category.");
       return res.status(404).json({
         success: false,
         message: "No courses found for the selected category.",

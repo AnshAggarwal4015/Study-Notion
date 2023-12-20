@@ -34,8 +34,9 @@ exports.sendotp = async (req, res) => {
     }
 
     const otpPayload = { email, otp };
+    console.log({ otpPayload });
     const otpBody = await OTP.create(otpPayload);
-
+    console.log({ otpBody });
     return res.status(200).json({
       success: true,
       message: `OTP Send Successfully`,
@@ -91,9 +92,7 @@ exports.signUp = async (req, res) => {
         message: `User is already registered`,
       });
     }
-    console.log("Reaced response");
     const response = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1);
-    console.log(response);
     if (response.length === 0) {
       // OTP not found for the email
       return res.status(400).json({
@@ -107,12 +106,10 @@ exports.signUp = async (req, res) => {
         message: "The OTP is not valid",
       });
     }
-    console.log("Reaced hashedPassword");
     const hashedPassword = await bcrypt.hash(password, 10);
 
     let approved = "";
     approved === "Instructor" ? (approved = false) : (approved = true);
-    console.log("Reaced profileDetails");
 
     const profileDetails = await Profile.create({
       gender: null,
@@ -120,9 +117,6 @@ exports.signUp = async (req, res) => {
       about: null,
       contactNumber: null,
     });
-    console.log({ profileDetails });
-
-    console.log("Reaced user");
     const user = await User.create({
       firstName,
       lastName,
