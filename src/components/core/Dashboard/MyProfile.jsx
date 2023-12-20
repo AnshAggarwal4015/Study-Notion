@@ -1,4 +1,3 @@
-import React from "react";
 import { RiEditBoxLine } from "react-icons/ri";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -8,8 +7,6 @@ import IconButton from "../../common/IconButton";
 const MyProfile = () => {
   const { user } = useSelector((state) => state.profile);
   const navigate = useNavigate();
-  console.log(user);
-  console.log(user.image);
   return (
     <>
       <h1 className="mb-14 text-3xl font-medium text-richblack-5">

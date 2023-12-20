@@ -23,14 +23,14 @@ export function sendOtp(email, navigate) {
         email,
         checkUserPresent: true,
       });
-      console.log("SENDOTP API RESPONSE: ", response);
+      console.log(response);
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
       toast.success("OTP Sent Successfully");
       navigate("/verify-email");
     } catch (error) {
-      console.log({error})
+      console.log({ error });
       toast.error(error.response?.data.message);
     }
     dispatch(setLoading(false));
@@ -62,7 +62,7 @@ export function signUp(
         otp,
       });
 
-      console.log("SIGNUP API RESPONSE............", response);
+      console.log(response);
 
       if (!response.data.success) {
         throw new Error(response.data.message);
@@ -70,7 +70,7 @@ export function signUp(
       toast.success("Signup Successful");
       navigate("/login");
     } catch (error) {
-      console.log("SIGNUP API ERROR............", error);
+      console.log(error);
       toast.error("Signup Failed");
       navigate("/signup");
     }
